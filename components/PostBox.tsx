@@ -60,26 +60,43 @@ function PostBox() {
                         <p className='min-w-[90px]'>Subreddit</p>
                         <input
                             className='m-2 flex-1 bg-blue-50 p-2 outline-none'
-                            {...register('subreddit')}
+                            {...register('subreddit', { required: true })}
                             type="text"
                             placeholder='i.e. react.js'
                         />
                     </div>
 
-                    <div>
-                        {imageBoxOpen && (
-                            <div className='flex items-center px-2'>
-                                <p className='min-w-[90px]'>Image URL</p>
-                                <input
-                                    className='m-2 flex-1 bg-blue-50 p-2 outline-none'
-                                    {...register('postImage')}
-                                    type="text"
-                                    placeholder='Optional...'
-                                />
-                            </div>
-                        )}
 
-                    </div>
+                    {imageBoxOpen && (
+                        <div className='flex items-center px-2'>
+                            <p className='min-w-[90px]'>Image URL</p>
+                            <input
+                                className='m-2 flex-1 bg-blue-50 p-2 outline-none'
+                                {...register('postImage')}
+                                type="text"
+                                placeholder='Optional...'
+                            />
+                        </div>
+                    )}
+                    {Object.keys(errors).length > 0 && (
+                        <div className='space-y-2 p-2 text-red-500'>
+                            {errors.postTitle?.type === "required" && (
+                                <p>A post title is required</p>
+                            )}
+
+                            {errors.subreddit?.type === "required" && (
+                                <p>A subreddit title is required</p>
+                            )}
+                        </div>
+                    )}
+
+                    {!!watch('postTitle') && (<button
+                        type="submit"
+                        className='w-full rounded-full bg-blue-400 p-2 text-white'
+                    >
+                        Create a post
+                    </button>
+                    )}
                 </div>
             )}
         </form>

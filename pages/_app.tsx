@@ -14,6 +14,7 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
           <Component {...pageProps} />
         </div>
       </SessionProvider>
+      
     </ApolloProvider>
   )
 }

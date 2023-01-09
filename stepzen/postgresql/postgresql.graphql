@@ -1,6 +1,3 @@
-"""
-Table 'comment' aliased as GQLName: 'Comment'
-"""
 type Comment {
   created_at: DateTime
   id: ID!
@@ -9,9 +6,6 @@ type Comment {
   username: String
 }
 
-"""
-Table 'post' aliased as GQLName: 'Post'
-"""
 type Post {
   body: String
   created_at: DateTime
@@ -20,34 +14,38 @@ type Post {
   subreddit_id: ID
   title: String
   username: String
+  votes: [Vote]
+    @materializer(
+      query: "getVotesByPostId",
+      arguments: [{ name: "post_id", field: "id" }]
+   )
+  comments: [Comment]
+    @materializer(
+      query: "getCommentsByPostId"
+      arguments: [{ name: "post_id", field: "id" }]
+  )
+  subreddit: [Subreddit]
+    @materializer(
+      query: "getSubredditListById",
+      arguments: [{ name: "id", field: "subreddit_id" }]
+  )
 }
 
-"""
-Table 'subreddit' aliased as GQLName: 'Subreddit'
-"""
 type Subreddit {
   created_at: DateTime
   id: ID!
   topic: String
 }
 
-"""
-Table 'vote' aliased as GQLName: 'Vote'
-"""
 type Vote {
   created_at: DateTime
   id: ID!
   post_id: ID
-  upvote: Boolean
+  upvote: Int
   username: String
 }
 
-"""
-The following queries are just a set of examples of how to access your schema.
-Feel free to modify them or aggregate more.
-"""
 type Query {
-  " Queries for type 'Comment' "
   getCommentList: [Comment]
     @dbquery(
       type: "postgresql"
@@ -55,6 +53,7 @@ type Query {
       table: "comment"
       configuration: "postgresql_config"
     )
+
   getCommentPaginatedList(first: Int, after: Int): [Comment]
     @dbquery(
       type: "postgresql"
@@ -64,7 +63,7 @@ type Query {
       """
       configuration: "postgresql_config"
     )
-  " Queries for type 'Post' "
+
   getPostBySubreddit_id(subreddit_id: ID!): [Post]
     @dbquery(
       type: "postgresql"
@@ -72,6 +71,7 @@ type Query {
       table: "post"
       configuration: "postgresql_config"
     )
+
   getPostBySubreddit_idAndBody(subreddit_id: ID!, body: String!): [Post]
     @dbquery(
       type: "postgresql"
@@ -79,6 +79,7 @@ type Query {
       table: "post"
       configuration: "postgresql_config"
     )
+
   getPostList: [Post]
     @dbquery(
       type: "postgresql"
@@ -86,6 +87,7 @@ type Query {
       table: "post"
       configuration: "postgresql_config"
     )
+
   getPostPaginatedList(first: Int, after: Int): [Post]
     @dbquery(
       type: "postgresql"
@@ -95,7 +97,7 @@ type Query {
       """
       configuration: "postgresql_config"
     )
-  " Queries for type 'Subreddit' "
+
   getSubredditList: [Subreddit]
     @dbquery(
       type: "postgresql"
@@ -113,6 +115,15 @@ type Query {
       configuration: "postgresql_config"
     )
 
+  getSubredditListById(id: ID!): [Subreddit]
+    @dbquery(
+      type: "postgresql"
+      query: """
+      select * from "subreddit" where id = $1
+      """
+      configuration: "postgresql_config"
+    )
+
   getSubredditPaginatedList(first: Int, after: Int): [Subreddit]
     @dbquery(
       type: "postgresql"
@@ -122,7 +133,7 @@ type Query {
       """
       configuration: "postgresql_config"
     )
-  " Queries for type 'Vote' "
+
   getVoteList: [Vote]
     @dbquery(
       type: "postgresql"
@@ -130,6 +141,26 @@ type Query {
       table: "vote"
       configuration: "postgresql_config"
     )
+
+  getVotesByPostId(post_id: ID!): [Vote]
+    @dbquery(
+      type:"postgresql"
+      query: """
+      select * from "vote" where "post_id" = $1
+      order by "created_at" desc
+      """
+      configuration: "postgresql_config"
+    )
+  
+  getCommentsByPostId(post_id: ID!): [Comment]
+    @dbquery(
+      type: "postgresql"
+      query:"""
+      select *  from "comment" where "post_id" = $1
+      """
+      configuration: "postgresql_config"
+    )
+
   getVotePaginatedList(first: Int, after: Int): [Vote]
     @dbquery(
       type: "postgresql"
@@ -141,12 +172,7 @@ type Query {
     )
 }
 
-"""
-The following mutations are just a set of examples of how to access your schema.
-Feel free to modify them or aggregate more.
-"""
 type Mutation {
-  " Mutations for type 'Comment' "
   deleteComment(
     username: String!
     post_id: ID!
@@ -161,6 +187,7 @@ type Mutation {
       dml: DELETE
       configuration: "postgresql_config"
     )
+
   insertComment(
     username: String
     post_id: ID
@@ -174,7 +201,7 @@ type Mutation {
       dml: INSERT
       configuration: "postgresql_config"
     )
-  " Mutations for type 'Post' "
+
   deletePost(
     body: String!
     subreddit_id: ID!
@@ -191,6 +218,7 @@ type Mutation {
       dml: DELETE
       configuration: "postgresql_config"
     )
+
   insertPost(
     body: String!
     subreddit_id: ID!
@@ -205,7 +233,7 @@ type Mutation {
       dml: INSERT
       configuration: "postgresql_config"
     )
-  " Mutations for type 'Subreddit' "
+
   deleteSubreddit(topic: String!, created_at: DateTime!, id: ID!): Subreddit
     @dbquery(
       type: "postgresql"
@@ -214,6 +242,7 @@ type Mutation {
       dml: DELETE
       configuration: "postgresql_config"
     )
+
   insertSubreddit(topic: String!): Subreddit
     @dbquery(
       type: "postgresql"
@@ -222,7 +251,7 @@ type Mutation {
       dml: INSERT
       configuration: "postgresql_config"
     )
-  " Mutations for type 'Vote' "
+
   deleteVote(
     username: String!
     post_id: ID!
@@ -237,6 +266,7 @@ type Mutation {
       dml: DELETE
       configuration: "postgresql_config"
     )
+  
   insertVote(
     username: String
     post_id: ID

@@ -21,7 +21,6 @@ type Props = {
 }
 
 function PostBox({ subreddit }: Props) {
-    console.log(subreddit)
     const { data: session } = useSession()
     const [addPost] = useMutation(ADD_POST, {
         refetchQueries: [GET_ALL_POSTS, 'getPostList'],

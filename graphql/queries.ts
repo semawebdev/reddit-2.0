@@ -75,3 +75,36 @@ export const GET_SUBREDDIT_BY_TOPIC = gql`
         }
     }
 `
+
+export const GET_POST_BY_POST_ID = gql`
+    query MyQuery($post_id: ID!) {
+        getPostListByPostId(post_id: $post_id) {
+            body
+            created_at
+            image
+            id
+            title
+            username
+            subreddit_id
+            comments {
+                created_at
+                id
+                post_id
+                text
+                username
+            }
+            subreddit {
+                created_at
+                id
+                topic
+            }
+            votes {
+                created_at
+                id
+                post_id
+                upvote
+                username
+            }
+        }
+    }
+`

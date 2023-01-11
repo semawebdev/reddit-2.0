@@ -8,6 +8,7 @@
   "dependencies": {
     "@apollo/client": "^3.7.3",
     "@heroicons/react": "^1.0.0",
+    "@uiball/loaders": "^1.2.6",
     "graphql": "^16.6.0",
     "next": "latest",
     "next-auth": "^4.18.7",

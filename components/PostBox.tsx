@@ -16,7 +16,12 @@ type FormData = {
     subreddit: string
 }
 
-function PostBox() {
+type Props = {
+    subreddit?: string
+}
+
+function PostBox({ subreddit }: Props) {
+    console.log(subreddit)
     const { data: session } = useSession()
     const [addPost] = useMutation(ADD_POST, {
         refetchQueries: [GET_ALL_POSTS, 'getPostList'],
@@ -43,12 +48,12 @@ function PostBox() {
             } = await client.query({
                 query: GET_SUBREDDIT_BY_TOPIC,
                 variables: {
-                    topic: formData.subreddit,
+                    topic: subreddit || formData.subreddit,
                 },
             })
 
             const subredditExists = getSubredditListByTopic.length > 0
-            
+
             if (!subredditExists) {
                 // create subreddit
                 console.log('Subreddit is new! -> creating a NEW subreddit!')
@@ -77,7 +82,7 @@ function PostBox() {
                 })
 
                 console.log("New post added:", newPost)
-                } else {
+            } else {
                 // use existing subreddit
                 console.log('Using existing subreddit!')
                 console.log(getSubredditListByTopic)
@@ -107,7 +112,7 @@ function PostBox() {
             toast.success('New post creaated!', {
                 id: notification
             })
-        } catch (error) { 
+        } catch (error) {
             toast.error("Whoops something went wrong", {
                 id: notification
             })
@@ -115,9 +120,9 @@ function PostBox() {
     })
 
     return (
-        <form 
-        onSubmit={onSubmit} 
-        className='sticky top-16 z-50 rounded-md border border-gray-300 bg-white p-2'>
+        <form
+            onSubmit={onSubmit}
+            className='sticky top-20 z-50 rounded-md border border-gray-300 bg-white p-2'>
             <div className='flex items-center space-x-3'>
                 <Avatar />
 
@@ -127,7 +132,7 @@ function PostBox() {
                     className="rounded-md flex-1 bg-gray-50 p-2 pl-5 outline-none"
                     type="text"
                     placeholder={
-                        session ? 'Create a post by entering a title!' : 'Sign in to post!'
+                        session ? subreddit ? `Create a post in r/${subreddit}` : 'Create a post by entering a title!' : 'Sign in to post!'
                     }
                 />
                 <PhotographIcon
@@ -149,16 +154,18 @@ function PostBox() {
                             placeholder='Text (optional)'
                         />
                     </div>
+                    {!subreddit && (
+                        <div className='flex items-center px-2'>
+                            <p className='min-w-[90px]'>Subreddit</p>
+                            <input
+                                className='m-2 flex-1 bg-blue-50 p-2 outline-none'
+                                {...register('subreddit', { required: true })}
+                                type="text"
+                                placeholder='i.e. react.js'
+                            />
+                        </div>
+                    )}
 
-                    <div className='flex items-center px-2'>
-                        <p className='min-w-[90px]'>Subreddit</p>
-                        <input
-                            className='m-2 flex-1 bg-blue-50 p-2 outline-none'
-                            {...register('subreddit', { required: true })}
-                            type="text"
-                            placeholder='i.e. react.js'
-                        />
-                    </div>
 
 
                     {imageBoxOpen && (

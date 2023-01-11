@@ -22,6 +22,39 @@ export const GET_ALL_POSTS = gql`
                 id
                 topic
             }
+            votes { 
+                created_at
+                id
+                post_id
+                upvote
+                username
+            }
+        }
+    }
+`
+
+export const GET_ALL_POSTS_BY_TOPIC = gql`
+    query MyQuery($topic: String!) {
+        getPostListByTopic(topic: $topic) {
+            body
+            created_at
+            image
+            id
+            title
+            username
+            subreddit_id
+            comments {
+                created_at
+                id
+                post_id
+                text
+                username
+            }
+            subreddit {
+                created_at
+                id
+                topic
+            }
             votes {
                 created_at
                 id

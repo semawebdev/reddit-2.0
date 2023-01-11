@@ -13,7 +13,7 @@ function Feed() {
                 <Post key={post.id} post={post} />
             ))}
         </div>
-    )
+    ) 
 }
 
 export default Feed

@@ -38,7 +38,6 @@ function PostPage() {
     } = useForm<FormData>()
 
     const onSubmit: SubmitHandler<FormData> = async (data) => {
-        // post comment here
 
         const notification = toast.loading('Posting your comment...')
 
@@ -64,7 +63,6 @@ function PostPage() {
                 <p className='text-sm'>
                     Comment as <span className='text-red-500'>{session?.user?.name}</span>
                 </p>
-
 
                 <form onSubmit={handleSubmit(onSubmit)} className='flex flex-col space-y-2'>
                     <textarea

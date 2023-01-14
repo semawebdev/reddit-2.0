@@ -21,7 +21,7 @@ type Post {
    )
   comments: [Comment]
     @materializer(
-      query: "getCommentsByPostId"
+      query: "getCommentByPostId"
       arguments: [{ name: "post_id", field: "id" }]
   )
   subreddit: [Subreddit]
@@ -51,6 +51,16 @@ type Query {
       type: "postgresql"
       schema: "public"
       table: "comment"
+      configuration: "postgresql_config"
+    )
+
+  getCommentByPostId(post_id: ID!): [Comment]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query:"""
+      select *  from "comment" where "post_id" = $1
+      """
       configuration: "postgresql_config"
     )
 
@@ -181,16 +191,6 @@ type Query {
       """
       configuration: "postgresql_config"
     )
-  
-  getCommentsByPostId(post_id: ID!): [Comment]
-    @dbquery(
-      type: "postgresql"
-      schema: "public"
-      query:"""
-      select *  from "comment" where "post_id" = $1
-      """
-      configuration: "postgresql_config"
-    )
 
   getVotePaginatedList(first: Int, after: Int): [Vote]
     @dbquery(
@@ -220,9 +220,9 @@ type Mutation {
     )
 
   insertComment(
-    username: String
-    post_id: ID
-    text: String
+    post_id: ID!
+    username: String!
+    text: String!
     created_at: DateTime
   ): Comment
     @dbquery(
@@ -299,10 +299,9 @@ type Mutation {
     )
   
   insertVote(
-    username: String
-    post_id: ID
-    created_at: DateTime
-    upvote: Boolean
+    post_id: ID!
+    username: String!
+    upvote: Boolean!
   ): Vote
     @dbquery(
       type: "postgresql"

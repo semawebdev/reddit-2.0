@@ -163,6 +163,18 @@ type Query {
       configuration: "postgresql_config"
     )
 
+  getSubredditListLimit(limit: Int!): [Subreddit]
+    @dbquery(
+      type: "postgresql"
+      schema: "public"
+      query: """
+      select * from "subreddit" 
+      order by "created_at" desc
+      limit $1
+      """
+      configuration: "postgresql_config"
+    )
+
   getSubredditPaginatedList(first: Int, after: Int): [Subreddit]
     @dbquery(
       type: "postgresql"
@@ -223,7 +235,6 @@ type Mutation {
     post_id: ID!
     username: String!
     text: String!
-    created_at: DateTime
   ): Comment
     @dbquery(
       type: "postgresql"

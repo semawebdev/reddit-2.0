@@ -44,8 +44,6 @@ function Post({ post }: Props) {
         if (vote && isUpvote) return;
         if (vote === false && !isUpvote) return;
 
-        console.log('voting...', isUpvote)
-
         await addVote({
             variables: {
                 post_id: post.id,

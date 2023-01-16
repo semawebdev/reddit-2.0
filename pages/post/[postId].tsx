@@ -69,13 +69,14 @@ function PostPage() {
                         {...register('comment')}
                         disabled={!session}
                         className='h-24 rounded-md border border-gray-200 p-2 pl-4 
-                    outline-none disabled:bg-gray-50'
+                        outline-none disabled:bg-gray-50'
                         placeholder={
                             session ? "What are your thoughts ?" : "Please sign in to comment"
                         }
                     />
 
                     <button
+                        disabled={!session}
                         type="submit"
                         className='rounded-full bg-red-500 p-3 font-semibold
                      text-white disabled:bg-gray-200'
@@ -88,8 +89,11 @@ function PostPage() {
                 <hr className='py-2' />
 
                 {post?.comments.map((comment) => (
-                    <div key={comment.id} className="relative flex items-center space-x-2 space-y-5">
-                        <hr className='absolute top-10 h-16 border left-7 z-0'/>
+                    <div
+                        key={comment.id}
+                        className="relative flex items-center space-x-2 space-y-5"
+                    >
+                        <hr className='absolute top-10 h-16 border left-7 z-0' />
                         <div className='z-50'>
                             <Avatar seed={comment.username} />
                         </div>

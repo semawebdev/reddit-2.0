@@ -37,7 +37,6 @@ function PostBox({ subreddit }: Props) {
     } = useForm<FormData>()
 
     const onSubmit = handleSubmit(async (formData) => {
-        console.log(formData)
         const notification = toast.loading('Creating new post...')
 
         try {
@@ -54,9 +53,6 @@ function PostBox({ subreddit }: Props) {
             const subredditExists = getSubredditListByTopic.length > 0
 
             if (!subredditExists) {
-                // create subreddit
-                console.log('Subreddit is new! -> creating a NEW subreddit!')
-
                 const {
                     data: { insertSubreddit: newSubreddit },
                 } = await addSubreddit({
@@ -65,7 +61,6 @@ function PostBox({ subreddit }: Props) {
                     },
                 })
 
-                console.log('Creating post...', formData)
                 const image = formData.postImage || ''
 
                 const {
@@ -80,12 +75,7 @@ function PostBox({ subreddit }: Props) {
                     },
                 })
 
-                console.log("New post added:", newPost)
             } else {
-                // use existing subreddit
-                console.log('Using existing subreddit!')
-                console.log(getSubredditListByTopic)
-
                 const image = formData.postImage || ''
 
                 const {
@@ -99,10 +89,7 @@ function PostBox({ subreddit }: Props) {
                         username: session?.user?.name,
                     }
                 })
-
-                console.log('New post added:', newPost)
             }
-            // after the post has been added
             setValue('postBody', '')
             setValue('postImage', '')
             setValue('postTitle', '')
@@ -164,8 +151,6 @@ function PostBox({ subreddit }: Props) {
                             />
                         </div>
                     )}
-
-
 
                     {imageBoxOpen && (
                         <div className='flex items-center px-2'>

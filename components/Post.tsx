@@ -26,7 +26,7 @@ function Post({ post }: Props) {
     const { data: session } = useSession()
     const [vote, setVote] = useState<boolean>()
 
-    const { data, loading } = useQuery(GET_ALL_VOTES_BY_POST_ID, {
+    const { data, loading, error } = useQuery(GET_ALL_VOTES_BY_POST_ID, {
         variables: {
             post_id: post?.id
         }
@@ -42,7 +42,7 @@ function Post({ post }: Props) {
             return
         }
         if (vote && isUpvote) return;
-        if (vote == false && !isUpvote) return;
+        if (vote === false && !isUpvote) return;
 
         console.log('voting...', isUpvote)
 
@@ -64,6 +64,20 @@ function Post({ post }: Props) {
         setVote(vote)
     }, [data])
 
+    const displayVotes = (data: any) => {
+        const votes: Vote[] = data?.getVotesByPostId
+        const displayNumber = votes?.reduce(
+            (total, vote) => (vote.upvote ? (total += 1) : (total -= 1)),
+            0
+        )
+
+        if (votes?.length === 0) return 0;
+        if (displayNumber === 0) {
+            return votes[0]?.upvote ? 1 : -1
+        }
+        return displayNumber;
+    }
+
     if (!post)
         return (
             <div className='flex w-full items-center justify-center p-10 text-xl'>
@@ -83,7 +97,7 @@ function Post({ post }: Props) {
                             vote && 'text-blue-400'
                             }`}
                     />
-                    <p className='text-xs font-bold text-black'>0</p>
+                    <p className='text-xs font-bold text-black'>{displayVotes(data)}</p>
                     <ArrowDownIcon
                         onClick={() => upVote(false)}
                         className={`voteButtons hover:text-red-400 ${

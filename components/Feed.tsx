@@ -17,7 +17,7 @@ function Feed({ topic }: Props) {
     } )
     
     const posts: Post[] = !topic ? data?.getPostList : data?.getPostListByTopic
-
+  
     return (
         <div className="flex flex-col mt-5 space-y-4">
           {posts?.map((post) => (

@@ -36,23 +36,6 @@ function Post({ post }: Props) {
         refetchQueries: [GET_ALL_VOTES_BY_POST_ID, 'getVotesByPostId'],
     })
 
-    const upVote = async (isUpvote: boolean) => {
-        if (!session) {
-            toast("You'll need to sign in to vote!")
-            return
-        }
-        if (vote && isUpvote) return;
-        if (vote === false && !isUpvote) return;
-
-        await addVote({
-            variables: {
-                post_id: post.id,
-                username: session.user?.name,
-                upvote: isUpvote,
-            },
-        })
-    }
-
     useEffect(() => {
         const votes: Vote[] = data?.getVotesByPostId;
         const vote = votes?.find(
@@ -61,6 +44,25 @@ function Post({ post }: Props) {
 
         setVote(vote)
     }, [data])
+
+    const upVote = async (isUpvote: boolean) => {
+        if (!session) {
+            toast("You'll need to sign in to vote!")
+            return
+        }
+        if (vote && isUpvote) return;
+        if (vote === false && !isUpvote) return;
+
+        const {
+            data: { insertVote: newVote },
+          } = await addVote({
+            variables: {
+                post_id: post.id,
+                username: session.user?.name,
+                upvote: isUpvote,
+            },
+        })
+    }
 
     const displayVotes = (data: any) => {
         const votes: Vote[] = data?.getVotesByPostId
@@ -85,7 +87,7 @@ function Post({ post }: Props) {
 
     return (
 
-        <Link href={`/post/${post.id}`}>
+        <Link href={`/post/${post.id}`} passHref={true}>
             <div className='flex cursor-pointer rounded-md border border-gray-300 bg-white shadow-sm hover:border hover:border-gray-600'>
                 {/* votes */}
                 <div className='flex flex-col items-center justify-start space-y-1 rounded-l-md bg-gray-50 p-4 text-gray-400'>
